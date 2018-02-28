@@ -1,9 +1,10 @@
 'use strict'
 
 const antlr4 = require('antlr4');
-const ECMAScriptLexer = require('./ECMAScriptLexer.js');
-const ECMAScriptParser = require('./ECMAScriptParser.js');
-const ECMAScriptListener = require('./ECMAScriptListener.js');
+const ECMAScriptLexer = require('./lib/ECMAScriptLexer.js');
+const ECMAScriptParser = require('./lib/ECMAScriptParser.js');
+const ECMAScriptListener = require('./lib/ECMAScriptListener.js');
+const Visitor = require('./visitor.js');
 
 const input = `{
 	db.bios.findOne({$test: 1});
@@ -14,6 +15,7 @@ const chars = new antlr4.InputStream(input);
 const lexer = new ECMAScriptLexer.ECMAScriptLexer(chars);
 const tokens  = new antlr4.CommonTokenStream(lexer);
 const parser = new ECMAScriptParser.ECMAScriptParser(tokens);
+const visitor = new Visitor();
 
 parser.buildParseTrees = true;
 
@@ -68,3 +70,6 @@ const buildAST = (tree, ruleNames) => {
 console.log(tree.toStringTree(parser.ruleNames));
 console.log('\nOR\n');
 console.log(JSON.stringify(buildAST(tree, parser.ruleNames)));
+
+console.log('visitor:');
+visitor.visitProgram(tree);
