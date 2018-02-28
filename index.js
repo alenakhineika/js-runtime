@@ -65,4 +65,6 @@ const buildAST = (tree, ruleNames) => {
     return res;
 };
 
+console.log(tree.toStringTree(parser.ruleNames));
+console.log('\nOR\n');
 console.log(JSON.stringify(buildAST(tree, parser.ruleNames)));
