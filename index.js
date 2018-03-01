@@ -1,75 +1,61 @@
-'use strict'
+const path = require('path');
+const Transformer = require('./transformer');
 
-const antlr4 = require('antlr4');
-const ECMAScriptLexer = require('./lib/ECMAScriptLexer.js');
-const ECMAScriptParser = require('./lib/ECMAScriptParser.js');
-const ECMAScriptListener = require('./lib/ECMAScriptListener.js');
-const Visitor = require('./visitor.js');
+const ECMAScriptLexer = require(path.resolve('lib', 'ECMAScriptLexer'));
+const ECMAScriptParser = require(path.resolve('lib', 'ECMAScriptParser'));
+const ECMAScriptListener = require(path.resolve('lib', 'ECMAScriptListener'));
 
-const input = `{
+const CSharpLexer = require(path.resolve('lib', 'CSharpLexer'));
+const CSharpParser = require(path.resolve('lib', 'CSharpParser'));
+
+const jsInput = `{
+	var x = 4;
+	
 	db.bios.findOne({$test: 1});
 	db.bios.findTwo([1, 2, 3]);
-}`
+}`;
 
-const chars = new antlr4.InputStream(input);
-const lexer = new ECMAScriptLexer.ECMAScriptLexer(chars);
-const tokens  = new antlr4.CommonTokenStream(lexer);
-const parser = new ECMAScriptParser.ECMAScriptParser(tokens);
-const visitor = new Visitor();
+const jsTransformer = new Transformer(jsInput, {
+	lexer: ECMAScriptLexer.ECMAScriptLexer,
+	parser: ECMAScriptParser.ECMAScriptParser,
+	listener: ECMAScriptListener.ECMAScriptListener
+});
 
-parser.buildParseTrees = true;
+const jsTree = jsTransformer.getTree();
+const jsAST = jsTransformer.getAST();
 
-const tree = parser.program();
+console.log('///////// JS TREE /////////\n');
 
-function CustomListener() {
-    ECMAScriptListener.ECMAScriptListener.call(this);
-};
+jsTransformer.walk();
 
-CustomListener.prototype = ECMAScriptListener.ECMAScriptListener.prototype
-CustomListener.prototype.constructor = CustomListener
-
-CustomListener.prototype.enterExpressionStatement = (ctx) => {
-	console.log(`---> enterExpressionStatement: ${ctx.getText()}`);
-};
-
-CustomListener.prototype.enterEveryRule = (ctx) => {
-	console.log(`enter ${parser.ruleNames[ctx.ruleIndex]}: ${ctx.getText()}`);
-};
-
-const listener = new CustomListener();
-
-// antlr4.tree.ParseTreeWalker.DEFAULT.walk(listener, tree);
-
-const buildAST = (tree, ruleNames) => {
-	ruleNames = ruleNames || null;
-
-	let s = antlr4.tree.Trees.getNodeText(tree, ruleNames);
-	
-	s = antlr4.Utils.escapeWhitespace(s, false);
-	
-	const c = tree.getChildCount();
-	
-    if (c===0) {
-        return s;
-	}
-	
-	let res = {type: s};
-
-    if(c>0) {
-		s = buildAST(tree.getChild(0), ruleNames);
-        res.arguments = [...(res.arguments || []), s];
-    }
-    for (let i=1;i<c;i++) {
-		s = buildAST(tree.getChild(i), ruleNames);
-		res.arguments = [...(res.arguments || []), s];
-    }
-
-    return res;
-};
-
-console.log(tree.toStringTree(parser.ruleNames));
+console.log('\n');
+console.log(jsTree);
 console.log('\nOR\n');
-console.log(JSON.stringify(buildAST(tree, parser.ruleNames)));
+console.log(jsAST);
 
+const csInput = `
+	public class Car {
+		int speedIncrease = 10;
+	}
+`;
+
+const csTransformer = new Transformer(csInput, {
+	lexer: CSharpLexer.CSharpLexer,
+	parser: CSharpParser.CSharpParser
+});
+
+const csTree = csTransformer.getTree();
+const csAST = csTransformer.getAST();
+
+console.log('\n');
+console.log('///////// CSHARP TREE /////////\n');
+console.log(csTree);
+console.log('\nOR\n');
+console.log(csAST);
+
+/*
+const Visitor = require('./visitor.js');
+const visitor = new Visitor();
 console.log('visitor:');
 visitor.visitProgram(tree);
+*/
