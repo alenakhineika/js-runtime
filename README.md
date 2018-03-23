@@ -22,10 +22,12 @@
 
 * `$ java org.antlr.v4.Tool`
 
-## Generating Lexer, Parser and Listener
+## Download project from git
 
-* `$ antlr4 <FileName>.g4`
+* `$ mkdir js-runtime`
+* `$ cd js-runtime`
+* `$ git clone git@github.com:alenakhineika/js-runtime.git .`
 
 ## App Start
 
-* `$ npm run compile && npm start`
+* `$ npm i && npm run compile && npm start`
