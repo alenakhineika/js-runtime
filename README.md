@@ -28,4 +28,4 @@
 
 ## App Start
 
-* `$ npm start`
+* `$ npm run compile && npm start`
