@@ -110,4 +110,15 @@ Visitor.prototype.removeQuotes = function(str) {
   return newStr;
 };
 
+/**
+ * Visits an error node and return a user-defined result of the operation
+ *
+ * @param {object} ctx
+ * @returns {String}
+ */
+
+Visitor.prototype.visitErrorNode = function(ctx) {
+  return ctx.getText();
+};
+
 module.exports = Visitor;
