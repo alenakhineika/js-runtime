@@ -18,15 +18,22 @@ ErrorListener.prototype.constructor = ErrorListener;
 /**
  * Collects syntax error
  *
- * @param {object} rec Recognizer - the parsing support code essentially. Most of it is error recovery stuff
- * @param {object} sym Offending symbol
+ * @param {object} recognizer The parsing support code essentially. Most of it is error recovery stuff
+ * @param {object} symbol Offending symbol
  * @param {int} line Line
- * @param {int} col Char position in line
- * @param {string} msg Error message
- * @param {string} e Recognition exception
+ * @param {int} column Char position in line
+ * @param {string} message Error message
+ * @param {string} payload Stack trace
  */
-ErrorListener.prototype.syntaxError = function(rec, sym, line, col, msg, e) {
-  this.errors.push({line, col, msg, e});
+ErrorListener.prototype.syntaxError = function(
+  recognizer,
+  symbol,
+  line,
+  column,
+  message,
+  payload
+) {
+  this.errors.push({line, column, message, payload});
 };
 
 /**
