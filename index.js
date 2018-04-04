@@ -19,18 +19,17 @@ const listener = new ErrorListener();
 parser.removeErrorListeners(); // Remove default ConsoleErrorListener
 parser.addErrorListener(listener); // Add custom error listener
 
-const tree = parser.expressionSequence();
+try {
+  console.log('JavaScript input:');
+  console.log(input);
+  console.log('Python output:');
 
-if (listener.hasErrors() === true) {
-  console.log(listener.errors);
+  const tree = parser.expressionSequence();
+  const output = new PythonGenerator().start(tree);
+
+  console.log(output);
+} catch (error) {
+  console.log(error);
 }
-
-console.log('JavaScript input:');
-console.log(input);
-
-const output = new PythonGenerator().start(tree);
-
-console.log('Python output:');
-console.log(output);
 
 // console.log(tree.toStringTree(parser.ruleNames));
